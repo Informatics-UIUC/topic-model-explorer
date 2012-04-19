@@ -15,7 +15,7 @@ public class ConfigManager {
         if (configProps != null)
             return configProps;
 
-        File configFile = new File("db_config.xml");
+        File configFile = new File("WEB-INF" + File.separator + "db_config.xml");
         if (!configFile.exists())
             throw new FileNotFoundException(configFile.toString());
 
