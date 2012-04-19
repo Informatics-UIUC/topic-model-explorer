@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+jarsExcludedFromWebInfLib=/Users/capitanu/Projects/SEASR/TopicModelExplorer/lib/smartgwt-skins.jar|/Users/capitanu/Projects/SEASR/TopicModelExplorer/lib/smartgwt.jar
+launchConfigExternalUrlPrefix=
+warSrcDir=war
+warSrcDirIsOutput=true

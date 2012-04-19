@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://mbostock.github.com/d3/d3.js"></script>
+<script src="d3.layout.cloud.js"></script>
+<script>
+  function getURLParameter(name) {
+      return decodeURIComponent((RegExp('[?&]' + name + '=' + '(.+?)(?:&|$)').exec(location.search)||[,null])[1]);
+  }
+
+  function tagcloud(wordCounts) {
+    document.title = 'Tagcloud for topic ' + getURLParameter('topic');
+
+    allCounts = wordCounts.map(function(w) { return w.count; });
+
+    var scale = d3.scale.log();
+    var fill = d3.scale.category20();
+    scale.domain([ d3.min(allCounts), d3.max(allCounts) ]);
+    scale.range([ 10, 100 ]);
+
+
+    d3.layout.cloud().size([500, 500])
+    .words(wordCounts.map(function(d) { return { 'text': d.word, 'size': scale(d.count) }; }))
+    .rotate(function() { return ~~(Math.random() * 2) * 90; })
+    .fontSize(function(d) { return d.size; })
+    .on("end", draw)
+    .start();
+
+    function draw(words) {
+      d3.select("body").append("svg")
+          .attr("width", 500)
+          .attr("height", 500)
+        .append("g")
+          .attr("transform", "translate(250,250)")
+        .selectAll("text")
+          .data(words)
+        .enter().append("text")
+          .style("font-size", function(d) { return d.size + "px"; })
+          .attr("text-anchor", "middle")
+          .attr("transform", function(d) {
+            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+          })
+          .style("fill", function(d) { return fill(d.text.toLowerCase()); })
+          .text(function(d) { return d.text; });
+    }
+  }
+
+  var newScript = document.createElement('script');
+  newScript.type = 'text/javascript';
+  newScript.src = 'topicmodelexplorer/topicKeywordCountsDataService?callback=tagcloud' +
+                  '&topic=' + getURLParameter('topic');
+  document.getElementsByTagName('head')[0].appendChild(newScript);
+</script>
+</head>
+<body>
+</body>
+</html>
