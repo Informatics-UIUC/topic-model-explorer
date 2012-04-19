@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+   <entry key="db_driver">com.mysql.jdbc.Driver</entry>
+   <entry key="db_url">jdbc:mysql://leovip021.ncsa.uiuc.edu/matt</entry>
+   <entry key="db_user">seasr</entry>
+   <entry key="db_passwd">m3andr3</entry>
+   <entry key="min_connections_per_partition">2</entry>
+   <entry key="max_connections_per_partition">10</entry>
+   <entry key="partition_count">1</entry>
+   <entry key="query_wordcounts"><![CDATA[
+	SELECT location, count FROM tei_locations_topic_keywords WHERE topic_id=%s AND count > 0
+   ]]></entry>
+   <entry key="query_files"><![CDATA[
+	SELECT file, title, last_name, first_name, year, count
+        FROM (
+           SELECT DISTINCT (file)
+           FROM tei_locations_topics
+           WHERE location = '%s'
+        ) t1
+        INNER JOIN tei_title_author_meta USING (file)
+        INNER JOIN (
+           SELECT file, SUM(count) AS count
+           FROM tei_locations_opennlp
+           WHERE location = '%1$s'
+           GROUP BY file
+        ) t2 USING (file)
+        ORDER BY count DESC, year, last_name, first_name
+   ]]></entry>
+   <entry key="query_topics"><![CDATA[
+	SELECT topic_id,
+                MAX(CASE WHEN rownum = 1 THEN location ELSE NULL END) as keyword1,
+                MAX(CASE WHEN rownum = 2 THEN location ELSE NULL END) as keyword2,
+                MAX(CASE WHEN rownum = 3 THEN location ELSE NULL END) as keyword3,
+                MAX(CASE WHEN rownum = 4 THEN location ELSE NULL END) as keyword4,
+                MAX(CASE WHEN rownum = 5 THEN location ELSE NULL END) as keyword5 
+        FROM (
+           SELECT topic_id, location, count, rownum
+           FROM (
+              SELECT topic_id, location, count,
+                   IF(@PREV <> topic_id, @ROWNUM := 1, @ROWNUM := @ROWNUM+1) AS rownum,
+                   @PREV := topic_id
+              FROM (
+                 SELECT topic_id, location, count
+                 FROM tei_locations_topic_keywords
+                 JOIN (
+                    SELECT DISTINCT(topic_id)
+                    FROM tei_locations_topics
+                    WHERE location = '%s'
+                 ) t1
+                 USING (topic_id)
+                 ORDER BY topic_id, count DESC
+              ) u, (SELECT @ROWNUM := 0, @PREV := -1) r
+           ) t2
+           WHERE rownum <= 5
+        ) t3
+        GROUP BY topic_id
+   ]]></entry>
+</properties>

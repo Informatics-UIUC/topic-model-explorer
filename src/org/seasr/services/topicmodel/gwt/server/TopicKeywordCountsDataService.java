@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,8 +24,6 @@ import org.seasr.services.topicmodel.gwt.shared.models.WordCount;
  */
 public class TopicKeywordCountsDataService extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
-	private static final String QUERY_WORDCOUNTS = "SELECT location, count FROM tei_locations_topic_keywords WHERE topic_id=%s AND count > 0";
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -51,11 +50,12 @@ public class TopicKeywordCountsDataService extends HttpServlet {
         Connection connection = null;
         Statement stmt = null;
         try {
-            connection = DBConnectionPoolManager.getConnectionPool().getConnection();
+            Properties dbConfig = ConfigManager.getConfigProperties();
+            connection = DBConnectionPoolManager.getConnectionPool(dbConfig).getConnection();
             stmt = connection.createStatement();
 
             List<WordCount> wordCounts = new ArrayList<WordCount>();
-            String query = String.format(QUERY_WORDCOUNTS, topic);
+            String query = String.format(dbConfig.getProperty("query_wordcounts").trim(), topic);
             ResultSet resultSet = stmt.executeQuery(query);
             while (resultSet.next()) {
                 WordCount wordCount = new WordCount();
