@@ -1,9 +1,8 @@
 package org.seasr.services.topicmodel.gwt.server;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
@@ -15,12 +14,12 @@ public class ConfigManager {
         if (configProps != null)
             return configProps;
 
-        File configFile = new File("WEB-INF" + File.separator + "db_config.xml");
-        if (!configFile.exists())
-            throw new FileNotFoundException(configFile.toString());
+        InputStream configData = Thread.currentThread().getContextClassLoader().getResourceAsStream("/db_config.xml");
+        if (configData == null)
+            throw new FileNotFoundException("db_config.xml");
 
         configProps = new Properties();
-        configProps.loadFromXML(new FileInputStream(configFile));
+        configProps.loadFromXML(configData);
 
         boolean configValid = true;
         configValid &= configProps.containsKey("db_driver");
@@ -28,6 +27,8 @@ public class ConfigManager {
         configValid &= configProps.containsKey("query_wordcounts");
         configValid &= configProps.containsKey("query_files");
         configValid &= configProps.containsKey("query_topics");
+        configValid &= configProps.containsKey("query_loc_topic_correlation");
+        configValid &= configProps.containsKey("text_zip_location");
 
         if (!configValid)
             throw new IOException("Required configuration properties missing from db_config.xml!");

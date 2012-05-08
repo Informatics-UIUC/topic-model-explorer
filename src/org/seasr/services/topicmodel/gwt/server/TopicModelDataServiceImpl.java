@@ -1,15 +1,24 @@
 package org.seasr.services.topicmodel.gwt.server;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.seasr.services.topicmodel.gwt.client.TopicModelDataService;
 import org.seasr.services.topicmodel.gwt.server.utils.DBUtils;
 import org.seasr.services.topicmodel.gwt.shared.models.FileMeta;
+import org.seasr.services.topicmodel.gwt.shared.models.LocTopicCorrMeta;
 import org.seasr.services.topicmodel.gwt.shared.models.TopicMeta;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -80,4 +89,93 @@ public class TopicModelDataServiceImpl extends RemoteServiceServlet implements T
         }
     }
 
+    @Override
+    public List<LocTopicCorrMeta> getLocationCorrelationForTopic(int topicId) throws Exception {
+        Connection connection = null;
+        Statement stmt = null;
+        try {
+            Properties dbConfig = ConfigManager.getConfigProperties();
+            connection = DBConnectionPoolManager.getConnectionPool(dbConfig).getConnection();
+            stmt = connection.createStatement();
+
+            List<LocTopicCorrMeta> locTopicCorrelations = new ArrayList<LocTopicCorrMeta>();
+
+            String query = String.format(dbConfig.getProperty("query_loc_topic_correlation").trim(), topicId);
+            ResultSet resultSet = stmt.executeQuery(query);
+            while (resultSet.next()) {
+                LocTopicCorrMeta locTopicCorrMeta = new LocTopicCorrMeta();
+                locTopicCorrMeta.setFileName(resultSet.getString("file"));
+                locTopicCorrMeta.setTitle(resultSet.getString("title"));
+                locTopicCorrMeta.setSegmentId(resultSet.getInt("segment"));
+                locTopicCorrMeta.setFreq(resultSet.getInt("freq"));
+                locTopicCorrMeta.setTopicId(resultSet.getInt("topic_id"));
+
+                locTopicCorrelations.add(locTopicCorrMeta);
+            }
+
+            return locTopicCorrelations;
+        }
+        finally {
+            DBUtils.releaseConnection(connection, stmt);
+        }
+    }
+
+    @Override
+    public String getTextForFileSegment(String file, int segment) throws Exception {
+        Properties config = ConfigManager.getConfigProperties();
+        String location = config.getProperty("text_zip_location");
+
+        File zip = new File(location, String.format("%s.xml.zip", file));
+        if (!zip.exists()) throw new FileNotFoundException(zip.toString());
+
+        FileInputStream fis = new FileInputStream(zip);
+        ZipInputStream zis = new ZipInputStream(fis);
+        ZipEntry entry;
+        StringBuilder contents = new StringBuilder();
+        boolean found = false;
+
+        try {
+            while ((entry = zis.getNextEntry()) != null) {
+                try {
+                    if (!entry.getName().equalsIgnoreCase("segment_" + segment + ".txt")) continue;
+
+                    found = true;
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(zis));
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        contents.append(line);
+                        contents.append(System.getProperty("line.separator"));
+                    }
+
+                    break;
+                }
+                finally {
+                    zis.closeEntry();
+                }
+            }
+        }
+        finally {
+            zis.close();
+        }
+
+        if (!found) throw new Exception("Segment " + segment + " was not found in file " + file);
+
+        return contents.toString();
+    }
+
+
+    private String validateFilename(String filename, String intendedDir) throws IOException {
+        File f = new File(filename);
+        String canonicalPath = f.getCanonicalPath();
+
+        File iD = new File(intendedDir);
+        String canonicalID = iD.getCanonicalPath();
+
+        if (canonicalPath.startsWith(canonicalID)) {
+            return canonicalPath;
+        } else {
+            throw new IllegalStateException("File is outside extraction target directory.");
+        }
+    }
 }
