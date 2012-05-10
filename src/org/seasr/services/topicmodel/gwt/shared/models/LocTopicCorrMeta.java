@@ -4,10 +4,15 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class LocTopicCorrMeta implements IsSerializable {
     private String title;
+    private String nation;
+    private String gender;
+    private String lastName;
+    private int year;
     private int topicId;
     private String fileName;
     private int segmentId;
-    private int freq;
+    private int numTypes;
+    private int numTokens;
 
     public String getTitle() {
         return title;
@@ -16,6 +21,30 @@ public class LocTopicCorrMeta implements IsSerializable {
     public void setTitle(String title) {
         this.title = title;
     }
+    
+    public String getNation() {
+        return nation;
+    }
+
+    public void setNation(String nation) {
+        this.nation = nation;
+    }
+    
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
     public int getTopicId() {
         return topicId;
@@ -23,6 +52,14 @@ public class LocTopicCorrMeta implements IsSerializable {
 
     public void setTopicId(int topicId) {
         this.topicId = topicId;
+    }
+    
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 
     public String getFileName() {
@@ -41,11 +78,19 @@ public class LocTopicCorrMeta implements IsSerializable {
         this.segmentId = segmentId;
     }
 
-    public int getFreq() {
-        return freq;
+    public int getNumTypes() {
+        return numTypes;
     }
 
-    public void setFreq(int freq) {
-        this.freq = freq;
+    public void setNumTypes(int numTypes) {
+        this.numTypes = numTypes;
+    }
+    
+    public int getNumTokens() {
+        return numTokens;
+    }
+
+    public void setNumTokens(int numTokens) {
+        this.numTokens = numTokens;
     }
 }

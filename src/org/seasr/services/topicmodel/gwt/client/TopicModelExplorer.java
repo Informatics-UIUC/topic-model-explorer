@@ -68,10 +68,12 @@ public class TopicModelExplorer implements EntryPoint {
         ListGridField titleField = new ListGridField("title", "Title");
         ListGridField yearField = new ListGridField("year", "Year", 40);
         yearField.setType(ListGridFieldType.INTEGER);
+        ListGridField nationField = new ListGridField("nation", "Nation");
+        ListGridField genderField = new ListGridField("gender", "Gender");
         ListGridField countField = new ListGridField("count", "Count", 40);
         countField.setType(ListGridFieldType.INTEGER);
-        filesGrid.setFields(new ListGridField[] { fileIdField, titleField, yearField, firstNameField, lastNameField, countField });
-        filesGrid.setHeaderSpans(new HeaderSpan("Documents List", new String[] { "file", "title", "year", "first_name", "last_name", "count" }));
+        filesGrid.setFields(new ListGridField[] { fileIdField, titleField, yearField, firstNameField, lastNameField, nationField, genderField, countField });
+        filesGrid.setHeaderSpans(new HeaderSpan("Documents List", new String[] { "file", "title", "year", "first_name", "last_name", "nation", "gender", "count" }));
 
         final ListGrid topicsGrid = new ListGrid() {
             @Override
@@ -178,14 +180,21 @@ public class TopicModelExplorer implements EntryPoint {
                             locTopicCorrGrid.setHeight100();
                             ListGridField fileIdField = new ListGridField("file", "File", 50);
                             ListGridField titleField = new ListGridField("title", "Title");
-//                            ListGridField topicIdField = new ListGridField("topic_id", "Topic Id", 50);
-//                            topicIdField.setType(ListGridFieldType.INTEGER);
-                            ListGridField segmentIdField = new ListGridField("segment", "Segment", 60);
+                            ListGridField lastNameField = new ListGridField("last_name", "LastName",40);
+                            ListGridField genderField = new ListGridField("gender", "Gender"); 
+                            ListGridField nationField = new ListGridField("nation", "Nation"); 
+                            ListGridField yearField = new ListGridField("year", "Year", 30);
+                            yearField.setType(ListGridFieldType.INTEGER);
+        //                    ListGridField topicIdField = new ListGridField("topic_id", "Topic Id", 50);
+//                          topicIdField.setType(ListGridFieldType.INTEGER);
+                            ListGridField segmentIdField = new ListGridField("segment", "Segment", 50);
                             segmentIdField.setType(ListGridFieldType.INTEGER);
-                            ListGridField freqField = new ListGridField("freq", "Freq", 40);
-                            freqField.setType(ListGridFieldType.INTEGER);
+                            ListGridField numTypesField = new ListGridField("num_types", "NumTypes", 60);
+                            numTypesField.setType(ListGridFieldType.INTEGER);
+                            ListGridField numTokensField = new ListGridField("num_tokens", "NumTokens", 60);
+                            numTokensField.setType(ListGridFieldType.INTEGER);
                             ListGridField actionsField = new ListGridField("actions", "Actions", 70);
-                            locTopicCorrGrid.setFields(new ListGridField[] { fileIdField, titleField, segmentIdField, freqField, actionsField });
+                            locTopicCorrGrid.setFields(new ListGridField[] { fileIdField, titleField, yearField, lastNameField, nationField, genderField, segmentIdField, numTypesField, numTokensField, actionsField });
                             locTopicCorrGrid.setShowRecordComponents(true);
                             locTopicCorrGrid.setShowRecordComponentsByCell(true);
                             locTopicCorrGrid.setCanRemoveRecords(false);

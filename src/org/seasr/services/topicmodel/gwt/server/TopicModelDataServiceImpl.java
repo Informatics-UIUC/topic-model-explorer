@@ -46,6 +46,8 @@ public class TopicModelDataServiceImpl extends RemoteServiceServlet implements T
                 fileMeta.setFileName(resultSet.getString("file"));
                 fileMeta.setPublicationYear(resultSet.getInt("year"));
                 fileMeta.setTitle(resultSet.getString("title"));
+                fileMeta.setNation(resultSet.getString("nation"));
+                fileMeta.setGender(resultSet.getString("gender")); 
                 fileMeta.setCount(resultSet.getInt("count"));
                 files.add(fileMeta);
             }
@@ -106,10 +108,14 @@ public class TopicModelDataServiceImpl extends RemoteServiceServlet implements T
                 LocTopicCorrMeta locTopicCorrMeta = new LocTopicCorrMeta();
                 locTopicCorrMeta.setFileName(resultSet.getString("file"));
                 locTopicCorrMeta.setTitle(resultSet.getString("title"));
+                locTopicCorrMeta.setNation(resultSet.getString("nation"));
+                locTopicCorrMeta.setGender(resultSet.getString("gender"));
+                locTopicCorrMeta.setLastName(resultSet.getString("last_name"));
+                locTopicCorrMeta.setYear(resultSet.getInt("year"));
                 locTopicCorrMeta.setSegmentId(resultSet.getInt("segment"));
-                locTopicCorrMeta.setFreq(resultSet.getInt("freq"));
+                locTopicCorrMeta.setNumTypes(resultSet.getInt("num_types"));
+                locTopicCorrMeta.setNumTokens(resultSet.getInt("num_tokens"));
                 locTopicCorrMeta.setTopicId(resultSet.getInt("topic_id"));
-
                 locTopicCorrelations.add(locTopicCorrMeta);
             }
 

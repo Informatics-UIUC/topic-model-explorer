@@ -5,6 +5,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class FileMeta implements IsSerializable {
     private String authorFirstName;
     private String authorLastName;
+    private String nation;
+    private String gender;
     private int publicationYear;
     private String fileName;
     private String title;
@@ -48,6 +50,22 @@ public class FileMeta implements IsSerializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+    
+    public String getNation() {
+        return nation;
+    }
+
+    public void setNation(String nation) {
+        this.nation = nation;
+    }
+    
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public int getCount() {

@@ -11,19 +11,40 @@ public class TopicCorrRecord extends ListGridRecord {
     public TopicCorrRecord(LocTopicCorrMeta fileMeta) {
         setFile(fileMeta.getFileName());
         setTitle(fileMeta.getTitle());
+        setNation(fileMeta.getNation());
+        setGender(fileMeta.getGender());
+        setLastName(fileMeta.getLastName());
+        setYear(fileMeta.getYear());
         setSegment(fileMeta.getSegmentId());
         setTopicId(fileMeta.getTopicId());
-        setFreq(fileMeta.getFreq());
+        setNumTypes(fileMeta.getNumTypes());
+        setNumTokens(fileMeta.getNumTokens());
     }
 
-    public void setFile(String file) {
+	public void setFile(String file) {
         setAttribute("file", file);
     }
 
     public void setTitle(String title) {
         setAttribute("title", title);
     }
+    
+    public void setNation(String nation) {
+        setAttribute("nation", nation);
+    }
+    
+    private void setGender(String gender) {
+    	setAttribute("gender", gender);
+	}
+    
+    private void setLastName(String lastName) {
+    	setAttribute("last_name", lastName);
+	}
 
+    public void setYear(int year) {
+        setAttribute("year", year);
+    }
+    
     public void setSegment(int segment) {
         setAttribute("segment", segment);
     }
@@ -32,7 +53,11 @@ public class TopicCorrRecord extends ListGridRecord {
         setAttribute("topic_id", topicId);
     }
 
-    public void setFreq(int freq) {
-        setAttribute("freq", freq);
+    public void setNumTypes(int numTypes) {
+        setAttribute("num_types", numTypes);
+    }
+    
+    public void setNumTokens(int numTokens) {
+        setAttribute("num_tokens", numTokens);
     }
 }

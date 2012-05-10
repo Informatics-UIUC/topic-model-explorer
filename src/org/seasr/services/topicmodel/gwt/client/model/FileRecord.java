@@ -11,6 +11,8 @@ public class FileRecord extends ListGridRecord {
     public FileRecord(FileMeta fileMeta) {
         setFile(fileMeta.getFileName());
         setTitle(fileMeta.getTitle());
+        setNation(fileMeta.getNation());
+        setGender(fileMeta.getGender());
         setYear(fileMeta.getPublicationYear());
         setFirstName(fileMeta.getAuthorFirstName());
         setLastName(fileMeta.getAuthorLastName());
@@ -24,6 +26,14 @@ public class FileRecord extends ListGridRecord {
     public void setTitle(String title) {
         setAttribute("title", title);
     }
+    
+    public void setNation(String nation) {
+        setAttribute("nation", nation);
+    }
+    
+    private void setGender(String gender) {
+    	setAttribute("gender", gender);
+	}
 
     public void setYear(int year) {
         setAttribute("year", year);
