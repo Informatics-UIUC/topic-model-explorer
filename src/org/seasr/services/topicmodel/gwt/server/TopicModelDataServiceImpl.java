@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -47,7 +46,7 @@ public class TopicModelDataServiceImpl extends RemoteServiceServlet implements T
                 fileMeta.setPublicationYear(resultSet.getInt("year"));
                 fileMeta.setTitle(resultSet.getString("title"));
                 fileMeta.setNation(resultSet.getString("nation"));
-                fileMeta.setGender(resultSet.getString("gender")); 
+                fileMeta.setGender(resultSet.getString("gender"));
                 fileMeta.setCount(resultSet.getInt("count"));
                 files.add(fileMeta);
             }
@@ -170,18 +169,27 @@ public class TopicModelDataServiceImpl extends RemoteServiceServlet implements T
         return contents.toString();
     }
 
+    @Override
+	public List<String> getTopWordsToHighlight(int topicId, String file, int segment) throws Exception {
+        Connection connection = null;
+        Statement stmt = null;
+        try {
+            Properties dbConfig = ConfigManager.getConfigProperties();
+            connection = DBConnectionPoolManager.getConnectionPool(dbConfig).getConnection();
+            stmt = connection.createStatement();
 
-    private String validateFilename(String filename, String intendedDir) throws IOException {
-        File f = new File(filename);
-        String canonicalPath = f.getCanonicalPath();
+            List<String> topWordsToHighlight = new ArrayList<String>();
 
-        File iD = new File(intendedDir);
-        String canonicalID = iD.getCanonicalPath();
+            String query = String.format(dbConfig.getProperty("query_highlight_top_words").trim(), topicId, file, segment);
+            ResultSet resultSet = stmt.executeQuery(query);
+            while (resultSet.next()) {
+                topWordsToHighlight.add(resultSet.getString("location").trim());
+            }
 
-        if (canonicalPath.startsWith(canonicalID)) {
-            return canonicalPath;
-        } else {
-            throw new IllegalStateException("File is outside extraction target directory.");
+            return topWordsToHighlight;
+        }
+        finally {
+            DBUtils.releaseConnection(connection, stmt);
         }
     }
 }

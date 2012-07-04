@@ -68,8 +68,8 @@ public class TopicModelExplorer implements EntryPoint {
         ListGridField titleField = new ListGridField("title", "Title");
         ListGridField yearField = new ListGridField("year", "Year", 40);
         yearField.setType(ListGridFieldType.INTEGER);
-        ListGridField nationField = new ListGridField("nation", "Nation");
-        ListGridField genderField = new ListGridField("gender", "Gender");
+        ListGridField nationField = new ListGridField("nation", "Nation", 55);
+        ListGridField genderField = new ListGridField("gender", "Gender", 20);
         ListGridField countField = new ListGridField("count", "Count", 40);
         countField.setType(ListGridFieldType.INTEGER);
         filesGrid.setFields(new ListGridField[] { fileIdField, titleField, yearField, firstNameField, lastNameField, nationField, genderField, countField });
@@ -97,7 +97,7 @@ public class TopicModelExplorer implements EntryPoint {
                     corrImg.addClickHandler(new ClickHandler() {
                         @Override
                         public void onClick(ClickEvent event) {
-                            int topicId = record.getAttributeAsInt("topic_id");
+                            final int topicId = record.getAttributeAsInt("topic_id");
 
                             com.smartgwt.client.widgets.Window window = new com.smartgwt.client.widgets.Window();
                             window.setTitle("Topic Location Correlation for topic " + topicId);
@@ -135,33 +135,36 @@ public class TopicModelExplorer implements EntryPoint {
 
                                                     @Override
                                                     public void onSuccess(String result) {
-                                                        String text = SafeHtmlUtils.htmlEscape(result);
+                                                        final String text = SafeHtmlUtils.htmlEscape(result);
 
-                                                        String kw1 = record.getAttribute("keyword1");
-                                                        String kw2 = record.getAttribute("keyword2");
-                                                        String kw3 = record.getAttribute("keyword3");
-                                                        String kw4 = record.getAttribute("keyword4");
-                                                        String kw5 = record.getAttribute("keyword5");
+                                                    	topicModelDataService.getTopWordsToHighlight(topicId, file, segment, new AsyncCallback<List<String>>() {
 
-                                                        text = text.replaceAll(" " + kw1 + " ", " <span style='color: #E41A1C; font-weight: bold;'>" + kw1 + "</span> ");
-                                                        text = text.replaceAll(" " + kw2 + " ", " <span style='color: #377EB8; font-weight: bold;'>" + kw2 + "</span> ");
-                                                        text = text.replaceAll(" " + kw3 + " ", " <span style='color: #4DAF4A; font-weight: bold;'>" + kw3 + "</span> ");
-                                                        text = text.replaceAll(" " + kw4 + " ", " <span style='color: #984EA3; font-weight: bold;'>" + kw4 + "</span> ");
-                                                        text = text.replaceAll(" " + kw5 + " ", " <span style='color: #FF7F00; font-weight: bold;'>" + kw5 + "</span> ");
+															@Override
+															public void onSuccess(List<String> result) {
+																String highlightedText = text;
+																for (String token : result)
+																	highlightedText = highlightedText.replaceAll(" " + token + " ", " <span style='font-size: 120%; font-weight: bold;'>" + token + "</span> ");
 
-                                                        HTMLFlow label = new HTMLFlow("<div style='font-family: Georgia,Serif,Arial; font-size: 11pt;'>" + text + "</div>");
-                                                        label.setWidth100();
-                                                        label.setHeight100();
-                                                        label.setPadding(5);
+																HTMLFlow label = new HTMLFlow("<div style='font-family: Georgia,Serif,Arial; font-size: 11pt;'>" + highlightedText + "</div>");
+																label.setWidth100();
+																label.setHeight100();
+																label.setPadding(5);
 
-                                                        com.smartgwt.client.widgets.Window window = new com.smartgwt.client.widgets.Window();
-                                                        window.setTitle("File " + file + ".xml, segment " + segment);
-                                                        window.setWidth(640);
-                                                        window.setHeight(480);
-                                                        window.setCanDragReposition(true);
-                                                        window.setCanDragResize(true);
-                                                        window.addItem(label);
-                                                        window.draw();
+																com.smartgwt.client.widgets.Window window = new com.smartgwt.client.widgets.Window();
+																window.setTitle("File " + file + ".xml, segment " + segment);
+																window.setWidth(640);
+																window.setHeight(480);
+																window.setCanDragReposition(true);
+																window.setCanDragResize(true);
+																window.addItem(label);
+																window.draw();
+															}
+
+															@Override
+															public void onFailure(Throwable caught) {
+		                                                        SC.say("Error", caught.getMessage());
+															}
+														});
                                                     }
 
                                                     @Override
@@ -181,8 +184,8 @@ public class TopicModelExplorer implements EntryPoint {
                             ListGridField fileIdField = new ListGridField("file", "File", 50);
                             ListGridField titleField = new ListGridField("title", "Title");
                             ListGridField lastNameField = new ListGridField("last_name", "LastName",40);
-                            ListGridField genderField = new ListGridField("gender", "Gender"); 
-                            ListGridField nationField = new ListGridField("nation", "Nation"); 
+                            ListGridField genderField = new ListGridField("gender", "Gender", 20);
+                            ListGridField nationField = new ListGridField("nation", "Nation", 55);
                             ListGridField yearField = new ListGridField("year", "Year", 30);
                             yearField.setType(ListGridFieldType.INTEGER);
         //                    ListGridField topicIdField = new ListGridField("topic_id", "Topic Id", 50);

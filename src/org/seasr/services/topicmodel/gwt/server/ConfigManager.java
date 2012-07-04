@@ -28,6 +28,7 @@ public class ConfigManager {
         configValid &= configProps.containsKey("query_files");
         configValid &= configProps.containsKey("query_topics");
         configValid &= configProps.containsKey("query_loc_topic_correlation");
+        configValid &= configProps.containsKey("query_highlight_top_words");
         configValid &= configProps.containsKey("text_zip_location");
 
         if (!configValid)

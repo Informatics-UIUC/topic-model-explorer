@@ -18,4 +18,6 @@ public interface TopicModelDataServiceAsync {
 
     void getTextForFileSegment(String file, int segment, AsyncCallback<String> callback);
 
+	void getTopWordsToHighlight(int topicId, String file, int segment, AsyncCallback<List<String>> callback);
+
 }
